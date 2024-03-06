@@ -24,17 +24,20 @@ class kardb:
 
             self.data = data
 
+
     def save(self,indent=3):
         filepath = f'{self.dbname}/{self.docname}.json'
 
         with open(filepath,'w') as f:
             json.dump(self.data,f,indent=indent)
 
+
     def createdirs(self):
         directory = os.path.dirname(f'./{self.dbname}/')
 
         if directory and not os.path.exists(directory):
             os.makedirs(directory)
+            
 
     def getdirs(self):
         directory = os.path.dirname(f'./{self.dbname}/')
