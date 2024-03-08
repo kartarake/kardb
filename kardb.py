@@ -53,8 +53,13 @@ class kardb:
             json.dump(data,f)
 
 
-    def changedoc(self,docname):
-        self.save()
+    def getdocname(self):
+        return self.docname
+
+
+    def changedoc(self,docname,save=True):
+        if save:
+            self.save()
 
         self.docname = docname
 
@@ -72,8 +77,8 @@ class kardb:
 
         os.rename(path,new_path)
 
-        if self.docname = old_docname:
-            self.changedoc(new_docname)
+        if self.docname == old_docname:
+            self.changedoc(new_docname,save=False)
             self.load()
 
 
@@ -82,7 +87,7 @@ class kardb:
 
         os.remove(path)
 
-        if self.docname = docname:
+        if self.docname == docname:
             path = f'{self.dbname}/main.json'
 
             if os.path.exists(path):
@@ -91,26 +96,28 @@ class kardb:
                 self.cacdoc('main')
 
 
-    def updatedoc(self, branch, docname=self.docname, indent=3):
-        path = f'{self.dbname}/{docname}.json'
+    def updatedoc(self, branch, indent=3):
+        self.data.update(branch)
+        self.save()
 
-        with open(path,'r') as f:
+
+    def doctype(self):
+        return type(self.data)
+
+
+    def mergedoc(self, docname1, docname2, docname=''):
+        path2 = f'{self.dbname}/{docname2}.json'
+
+        with open(path2,'r') as f:
             data = json.load(f)
 
-        data.update(branch)
+        currentdoc = self.docname
 
-        with open(path,'w') as f:
-            json.dump(data,f,inden)
+        self.changedoc(docname1)
+        self.updatedoc(data)
+        self.changedoc(currentdoc)
 
+        self.deletedoc(docname2)
 
-    def doctype(self, docname=self.docname):
-        if not docname == self.docname:
-            path = f'{self.dbname}/{docname}.json'
-
-            with open(path,'r') as f:
-                data = json.load(f)
-
-            return type(data)
-
-        else:
-            return type(self.data)
+        if docname:
+            self.renamedoc(self.docname, docname)
