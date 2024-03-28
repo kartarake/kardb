@@ -8,6 +8,7 @@ class kardb:
         self.docname = 'main'
         self.host = host
         self.user = user
+        self.data = {}
 
     def create_database(self):
         query = f'create database if not exists {self.dbname}'
@@ -26,3 +27,21 @@ class kardb:
     def disconnect(self):
         mycursor.close()
         db.close()
+
+    def createdoc(self, docname):
+        self.docname = docname
+
+        query = f"""create table if not exists {docname} (
+        data JSON)
+        """
+        mycursor.execute(query)
+
+    def loaddoc(self):
+        query = f"""select * from {self.docname}"""
+        mycursor.execute(query)
+
+        data = mycursor.fetchall()[0]
+
+        self.data = data
+
+    def changedoc(self,docname):
